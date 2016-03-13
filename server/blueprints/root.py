@@ -8,3 +8,7 @@ blueprint = Blueprint('root', __name__)
 def index():
     return 'hello world'
 
+@blueprint.route('/bill')
+def bill():
+    return 'this is a bill'
+
