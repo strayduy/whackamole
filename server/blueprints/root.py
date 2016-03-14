@@ -4,6 +4,7 @@ from flask import render_template
 from flask import request
 
 # Models
+from ..models import Bill
 from ..models import Vote
 
 # Initialize blueprint
@@ -16,5 +17,6 @@ def index():
 
 @blueprint.route('/bill/<bill_id>')
 def bill(bill_id):
-    return 'this is a bill #' + bill_id
+    bill = Bill.get_by_id(bill_id)
+    return bill['title'] + '<br>' + bill['description']
 
