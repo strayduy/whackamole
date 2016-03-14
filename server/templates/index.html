@@ -1,9 +1,9 @@
 <html>
   <body>
-    <h1>hello world</h1>
+    <h1>Alice</h1>
     {% for vote in votes %}
       <h2>
-        <a href="/bill/{{ vote.bill.id }}"> {{ vote.bill.title }} - {{ vote.representative.name }}</a>
+        <a href="/bill/{{ vote.bill_id }}">{{ vote.bill['title'] }}</a>
       </h2>
     {% endfor %}
   </body>

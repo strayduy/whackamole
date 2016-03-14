@@ -1,21 +1,25 @@
 # Standard libs
 import random
 
-class Bill(object):
-    def __init__(self):
-        self.id = random.randint(0, 1000)
-        self.title = 'title'
-        self.description = ''
+# Third party libs
+from bson.objectid import ObjectId
+import pymongo
 
-class Representative(object):
-    def __init__(self):
-        self.id = random.randint(0, 1000)
-        self.name = random.choice(['Alice', 'Bob', 'Carol', 'David', 'Eve'])
+# Our libs
+from .database import Database
 
 class Vote(object):
-    def __init__(self):
-        self.id = random.randint(0, 1000)
-        self.bill = Bill()
-        self.representative = Representative()
-        self.decision = random.choice(['yay', 'nay', 'abstain']) # One of: 'yay', 'nay', 'abstain'
+    def __init__(self, data):
+        self.id = data['_id']
+        self.representative = data['representative']
+        self.decision = data['decision']
+        self.bill_id = data['bill_id']
+
+        self.bill = Database.db.bills.find_one({'_id': ObjectId(data['bill_id'])})
+
+    @classmethod
+    def get_all(cls):
+        votes = Database.db.votes.find({'representative': 'Alice'})
+        votes = map(Vote, votes)
+        return votes
 

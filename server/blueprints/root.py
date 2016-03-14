@@ -11,7 +11,7 @@ blueprint = Blueprint('root', __name__)
 
 @blueprint.route('/')
 def index():
-    votes = [Vote() for _ in xrange(10)]
+    votes = Vote.get_all()
     return render_template('index.html', votes=votes)
 
 @blueprint.route('/bill/<bill_id>')
