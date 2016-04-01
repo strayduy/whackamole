@@ -1,10 +1,14 @@
 <html>
   <body>
-    <h1>Alice</h1>
-    {% for vote in votes %}
-      <h2>
-        <a href="/bill/{{ vote.bill_id }}">{{ vote.bill['title'] }}</a>
-      </h2>
-    {% endfor %}
+    <h1>CA</h1>
+    <table>
+      {% for vote in votes %}
+        <tr>
+          <td>{{ vote.rep_name }}</td>
+          <td>{{ vote.bill_title }}</td>
+          <td>{{ vote.outcome }}</td>
+        </tr>
+      {% endfor %}
+    </table>
   </body>
 </html>
