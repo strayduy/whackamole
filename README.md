@@ -10,5 +10,8 @@ rsync -avz --delete --delete-excluded --exclude-from=rsync_data/exclusions.txt g
 The data is being parsed by running:
 python load_db/load_votes.py
 
-The data is being uploaded to the db using the following command:
+The data is being uploaded to the db using the following commands:
+
 mongoimport -h $WHACKAMOLE_DB_HOST -d $WHACKAMOLE_DB_NAME -c senate_votes -u $WHACKAMOLE_DB_USER -p $WHACKAMOLE_DB_PASSWORD --file /tmp/votes/senate.json
+
+mongoimport -h $WHACKAMOLE_DB_HOST -d $WHACKAMOLE_DB_NAME -c senate_reps -u $WHACKAMOLE_DB_USER -p $WHACKAMOLE_DB_PASSWORD --file /tmp/reps/senate.json
