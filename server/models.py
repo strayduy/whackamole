@@ -27,13 +27,14 @@ class SenateVote(object):
   def __init__(self, data):
     self.id = data['_id']
     self.bill_title = data['bill_title']
+    self.bill_link = data['bill_link']
     self.rep_state = data['rep_state']
     self.outcome = data['outcome']
     self.rep_name = data['rep_name']
 
   @classmethod
-  def get_all(cls):
-    senate_votes = Database.db.senate_votes.find({'rep_state': 'CA'})
+  def get_state(cls, state):
+    senate_votes = Database.db.senate_votes.find({'rep_state': state})
     senate_votes = map(SenateVote, senate_votes)
     return senate_votes
 

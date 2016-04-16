@@ -11,6 +11,7 @@ blueprint = Blueprint('root', __name__)
 
 @blueprint.route('/')
 def index():
-    votes = SenateVote.get_all()
-    return render_template('index.html', votes=votes)
+    state = 'FL'
+    votes = SenateVote.get_state(state)
+    return render_template('index.html', votes=votes, state=state)
 
