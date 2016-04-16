@@ -11,7 +11,7 @@ outcome_dict = {"No": "No",
                 "Not Voting": "Abstain",
                 "Present": "Abstain"}
 
-for subdir, dirs, files in os.walk("../rsync_data/votes"):
+for subdir, dirs, files in os.walk("rsync_data/votes"):
   for file_name in files:
     if not file_name.endswith(".json"):
       continue
@@ -27,6 +27,8 @@ for subdir, dirs, files in os.walk("../rsync_data/votes"):
       if "title" not in data["bill"]:
         print "There is no title in %s" % filepath
       bill_title = data["bill"]["title"]
+      bill_link = "https://www.govtrack.us/congress/votes/%s-%s/%s%s" % (
+        data["congress"], data["session"], data["chamber"], data["number"])
       for outcome in ["No", "Nay", "Not Voting", "Present", "Yea", "Aye", "Yes"]:
         if outcome not in data["votes"]:
           continue
@@ -34,6 +36,7 @@ for subdir, dirs, files in os.walk("../rsync_data/votes"):
           vote_dict = {"rep_state":reps["state"],
                        "rep_name":reps["display_name"],
                        "bill_title":bill_title,
+                       "bill_link":bill_link,
                        "outcome":outcome_dict[outcome]}
           json.dump(vote_dict, ofile)
           ofile.write('\n')
