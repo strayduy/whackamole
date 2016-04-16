@@ -23,6 +23,21 @@ class Vote(object):
         votes = map(Vote, votes)
         return votes
 
+class SenateRep(object):
+  def __init__(self, data):
+    self.id = data['_id']
+    self.senate_id = data['rep_id']
+    self.senate_name = data['rep_name']
+    self.state = data['state']
+    self.yes_votes = data['yes_votes']
+    self.no_votes = data['no_votes']
+    self.abstain_votes = data['abstain_votes']
+
+  @classmethod
+  def get_by_rep_id(cls, rep_id):
+    senate_rep = Database.db.senate_reps.find_one({'rep_id': rep_id})
+    return senate_rep
+
 class SenateVote(object):
   def __init__(self, data):
     self.id = data['_id']
@@ -31,6 +46,7 @@ class SenateVote(object):
     self.rep_state = data['rep_state']
     self.outcome = data['outcome']
     self.rep_name = data['rep_name']
+    self.rep_id = data['rep_id']
 
   @classmethod
   def get_state(cls, state):

@@ -5,6 +5,7 @@ from flask import request
 
 # Models
 from ..models import SenateVote
+from ..models import SenateRep
 
 # Initialize blueprint
 blueprint = Blueprint('root', __name__)
@@ -15,3 +16,7 @@ def index():
     votes = SenateVote.get_state(state)
     return render_template('index.html', votes=votes, state=state)
 
+@blueprint.route('/rep/<rep_id>')
+def rep(rep_id):
+    rep = SenateRep.get_by_rep_id(rep_id)
+    return render_template('rep.html', rep=rep)
