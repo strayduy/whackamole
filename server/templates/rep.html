@@ -1,10 +1,22 @@
 <html>
   <body>
     <h1>{{ rep.rep_name }}</h1>
+    Clean votes: {{ rep.upvotes }}<br/>
+    Dirty votes: {{ rep.downvotes }}<br/>
     <ul>
       <li>Yes: {{ rep.yes_votes }}</li>
       <li>No: {{ rep.no_votes }}</li>
       <li>Abstain: {{ rep.abstain_votes }}</li>
     </ul>
+    <table>
+      {% for vote in votes %}
+        <tr>
+          <td>{{ vote.upvotes }}</td>
+          <td>{{ vote.downvotes }}</td>
+          <td><a target="_blank" href="{{ vote.bill_link }}">{{ vote.bill_title }}</a></td>
+          <td>{{ vote.outcome }}</td>
+        </tr>
+      {% endfor %}
+    </table>
   </body>
 </html>

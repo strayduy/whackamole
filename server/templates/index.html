@@ -4,6 +4,8 @@
     <table>
       {% for vote in votes %}
         <tr>
+          <td>{{ vote.upvotes }}</td>
+          <td>{{ vote.downvotes }}</td>
           <td><a target="_blank" href="/rep/{{ vote.rep_id }}">{{ vote.rep_name }}</a></td>
           <td><a target="_blank" href="{{ vote.bill_link }}">{{ vote.bill_title }}</a></td>
           <td>{{ vote.outcome }}</td>

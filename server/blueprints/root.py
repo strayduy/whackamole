@@ -19,4 +19,5 @@ def index():
 @blueprint.route('/rep/<rep_id>')
 def rep(rep_id):
     rep = SenateRep.get_by_rep_id(rep_id)
-    return render_template('rep.html', rep=rep)
+    votes = SenateVote.get_by_rep_id(rep_id)
+    return render_template('rep.html', rep=rep, votes=votes)

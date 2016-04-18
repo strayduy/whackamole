@@ -65,7 +65,9 @@ for subdir, dirs, files in os.walk("rsync_data/votes"):
                        "rep_id": reps["id"],
                        "bill_title":bill_title,
                        "bill_link":bill_link,
-                       "outcome":outcome_dict[outcome]}
+                       "outcome":outcome_dict[outcome],
+                       "upvotes":0,
+                       "downvotes":0}
           json.dump(vote_dict, votes_ofile)
           votes_ofile.write('\n')
           if reps["id"] not in reps_dict:
@@ -78,7 +80,9 @@ for rep_id, rep in reps_dict.iteritems():
        "state":rep.state,
        "yes_votes":rep.yes_votes,
        "no_votes":rep.no_votes,
-       "abstain_votes":rep.abstain_votes}
+       "abstain_votes":rep.abstain_votes,
+       "upvotes":0,
+       "downvotes":0}
   json.dump(d, senate_reps_file)
   senate_reps_file.write('\n')
 

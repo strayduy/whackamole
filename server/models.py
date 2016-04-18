@@ -32,6 +32,8 @@ class SenateRep(object):
     self.yes_votes = data['yes_votes']
     self.no_votes = data['no_votes']
     self.abstain_votes = data['abstain_votes']
+    self.upvotes = data['upvotes']
+    self.downvotes = data['downvotes']
 
   @classmethod
   def get_by_rep_id(cls, rep_id):
@@ -47,10 +49,18 @@ class SenateVote(object):
     self.outcome = data['outcome']
     self.rep_name = data['rep_name']
     self.rep_id = data['rep_id']
+    self.upvotes = data['upvotes']
+    self.downvotes = data['downvotes']
 
   @classmethod
   def get_state(cls, state):
-    senate_votes = Database.db.senate_votes.find({'rep_state': state})
+    senate_votes = Database.db.senate_votes.find({'rep_state': state}).sort('downvotes', pymongo.DESCENDING)
     senate_votes = map(SenateVote, senate_votes)
     return senate_votes
+
+  @classmethod
+  def get_by_rep_id(cls, rep_id):
+    votes = Database.db.senate_votes.find({'rep_id': rep_id}).sort('downvotes', pymongo.DESCENDING)
+    votes = map(SenateVote, votes)
+    return votes
 
