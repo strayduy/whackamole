@@ -53,8 +53,16 @@ class SenateVote(object):
     self.downvotes = data['downvotes']
 
   @classmethod
+  def get_all(cls):
+    votes = Database.db.senate_votes.find({}).sort('downvotes',
+        pymongo.DESCENDING)
+    votes = map(SenateVote, votes)
+    return votes
+
+  @classmethod
   def get_state(cls, state):
-    senate_votes = Database.db.senate_votes.find({'rep_state': state}).sort('downvotes', pymongo.DESCENDING)
+    senate_votes = Database.db.senate_votes.find(
+        {'rep_state': state}).sort('downvotes', pymongo.DESCENDING)
     senate_votes = map(SenateVote, senate_votes)
     return senate_votes
 

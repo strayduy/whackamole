@@ -54,15 +54,24 @@ def facebook_authorized(resp):
     )
   session['oauth_token'] = (resp['access_token'], '')
   me = facebook.get('/me')
-  state = 'FL'
-  votes = SenateVote.get_state(state)
+  votes= SenateVote.get_all()
   return render_template('index.html', name=me.data['name'],
-      votes=votes, state=state)
+      votes=votes)
 
 @facebook.tokengetter
 def get_facebook_oauth_token():
   return session.get('oauth_token')
 
+@blueprint.route('/state', methods=['POST'])
+@blueprint.route('/state/<state>')
+def state(state=None):
+  me = facebook.get('/me')
+  if request.method == "POST":
+    state = request.form['state']
+  state = state.upper()
+  votes = SenateVote.get_state(state)
+  return render_template('state.html', name=me.data['name'],
+      votes=votes, state=state)
 
 @blueprint.route('/rep/<rep_id>')
 def rep(rep_id):

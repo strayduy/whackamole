@@ -1,13 +1,6 @@
-<!DOCTYPE html>
 <html>
-  <title>Whac-a-mole Politics</title>
   <body>
-    <h1>Hello {{ name }}</h1>
-    <form action="{{ url_for('root.state') }}" method=post>
-      <label for="state">Please enter your state:</label>
-      <input type="text" name="state" />
-      <input type="submit">
-    </form>
+    <h1>Hi {{ name }}, here are the votes of the senators from state {{ state }}</h1>
     <table>
       {% for vote in votes %}
         <tr>
