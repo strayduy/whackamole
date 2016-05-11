@@ -1,3 +1,4 @@
 Flask
+Flask-OAuth
 Flask-Script
 pymongo
