@@ -6,6 +6,7 @@ from .database import Database
 
 # Blueprints
 from .blueprints import root
+from .blueprints import oauth
 
 def create_app(config_object):
     app = Flask(__name__)
@@ -21,6 +22,7 @@ def create_app(config_object):
     Database.connect(**db_config)
 
     app.register_blueprint(root.blueprint)
+    app.register_blueprint(oauth.blueprint)
 
     return app
 
