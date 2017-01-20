@@ -63,3 +63,15 @@ class SenateVote(object):
         pymongo.DESCENDING)
     votes = map(SenateVote, votes)
     return votes
+
+  @classmethod
+  def update_vote(cls, vote_id, consistent):
+    print "The vote_id is [%s], the consistent bool is [%s]" % (vote_id, consistent)
+    counter = "upvotes"
+    if not consistent:
+      counter = "downvotes"
+    inc_dict = {"$inc": {counter: 1}}
+    Database.db.senate_votes.update(
+      { "_id": ObjectId(vote_id)},
+      inc_dict
+    )

@@ -1,9 +1,36 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
   <head>
     <title>Whac-a-mole Politics</title>
     <link href='https://fonts.googleapis.com/css?family=Istok+Web' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="../static/js/jquery-3.1.1.min.js"></script>
+    <script>
+      $(document).ready(function(){
+        $(".vote_button").click(function(){
+          var $button = $(this);
+          // Update the number client-side
+          var oldValue = parseFloat($button.text());
+          $button.text(oldValue + 1);
+          var consistent_bool = 1;
+          var name = $button.attr("name");
+          if (name == "decrement") {
+            consistent_bool = 0;
+          }
+          var request_params = {
+            vote_id: $button.attr("vote_id"),
+            consistent: consistent_bool
+          };
+          $.post('/inc', request_params)
+            .done(function(response) {
+              alert("success");
+            })
+            .fail(function(error) {
+              alert("error");
+            });
+        });
+      });
+    </script>
   </head>
   <body>
     <h1>Hello {{ name }}</h1>
@@ -11,8 +38,8 @@
     <table>
       {% for vote in votes %}
         <tr>
-          <td>{{ vote.upvotes }}</td>
-          <td>{{ vote.downvotes }}</td>
+          <td><button class='vote_button' name='increment' vote_id='{{ vote.id }}'>{{ vote.upvotes }}</button></td>
+          <td><button class='vote_button' name='decrement' vote_id='{{ vote.id }}'>{{ vote.downvotes }}</button></td>
           <td><a target="_blank" href="/rep/{{ vote.rep_id }}">{{ vote.rep_name }}</a></td>
           <td><a target="_blank" href="{{ vote.bill_link }}">{{ vote.bill_title }}</a></td>
           <td>{{ vote.outcome }}</td>
