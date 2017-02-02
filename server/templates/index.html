@@ -14,7 +14,7 @@
           $button.text(oldValue + 1);
           var consistent_bool = 1;
           var name = $button.attr("name");
-          if (name == "decrement") {
+          if (name == "downvote") {
             consistent_bool = 0;
           }
           var request_params = {
@@ -23,10 +23,14 @@
           };
           $.post('/inc', request_params)
             .done(function(response) {
-              alert("success");
+              parsed_response = JSON.parse(response);
+              if (parsed_response.operation == "decrement") {
+                // TODO: decrement the other button's counter when needed
+                $button.text(oldValue - 1);
+              }
             })
             .fail(function(error) {
-              alert("error");
+              alert("The response is " + error);
             });
         });
       });
@@ -38,8 +42,8 @@
     <table>
       {% for vote in votes %}
         <tr>
-          <td><button class='vote_button' name='increment' vote_id='{{ vote.id }}'>{{ vote.upvotes }}</button></td>
-          <td><button class='vote_button' name='decrement' vote_id='{{ vote.id }}'>{{ vote.downvotes }}</button></td>
+          <td><button class='vote_button' name='upvote' vote_id='{{ vote.id }}'>{{ vote.upvotes }}</button></td>
+          <td><button class='vote_button' name='downvote' vote_id='{{ vote.id }}'>{{ vote.downvotes }}</button></td>
           <td><a target="_blank" href="/rep/{{ vote.rep_id }}">{{ vote.rep_name }}</a></td>
           <td><a target="_blank" href="{{ vote.bill_link }}">{{ vote.bill_title }}</a></td>
           <td>{{ vote.outcome }}</td>

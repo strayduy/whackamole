@@ -9,6 +9,7 @@ import simplejson as json
 # Models
 from ..models import SenateVote
 from ..models import SenateRep
+from ..models import UserVote
 
 # Initialize blueprint
 blueprint = Blueprint('root', __name__)
@@ -47,10 +48,17 @@ def rep(rep_id):
 
 @blueprint.route('/inc', methods=['POST'])
 def increment_count():
-  print "The request.form is [%s]" % request.form
   vote_id = request.form['vote_id'].replace(" + ", "")
   consistent = int(request.form['consistent'])
-  print "In increment_count, vote_id is [%s], consistent is [%s]" % (vote_id, consistent)
   me = session.get('user')
-  SenateVote.update_vote(vote_id, consistent)
-  return json.dumps({'status':'OK','vote_id':vote_id});
+  old_vote = UserVote.get_vote(me["name"], vote_id)
+  print "The old_vote is [%s]" % old_vote
+  if not old_vote:
+    UserVote.add_vote(me["name"], vote_id, consistent)
+    SenateVote.update_vote(vote_id, consistent)
+    operation = "increment"
+  else:
+    UserVote.delete_vote(me["name"], vote_id)
+    SenateVote.update_vote(vote_id, old_vote["consistent"], -1)
+    operation = "decrement"
+  return json.dumps({'status':'OK','operation':operation})
