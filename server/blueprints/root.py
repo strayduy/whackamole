@@ -14,8 +14,8 @@ from ..models import UserVote
 # Initialize blueprint
 blueprint = Blueprint('root', __name__)
 
-# TODO: Figure out how to pass two arguments here
-@blueprint.route('/<state>')
+@blueprint.route('/')
+@blueprint.route('/<string:state>')
 def index(state=None):
   me = session.get('user')
 
