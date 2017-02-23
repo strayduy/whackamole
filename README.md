@@ -5,7 +5,7 @@ This is an app to keep politicians honest.
 To run the server run "python manage.py runserver"
 
 The data is being loaded into the rsync_data directory using the following command:
-rsync -avz --delete --delete-excluded --exclude-from=rsync_data/exclusions.txt govtrack.us::govtrackdata/congress/113/votes .
+rsync -avz --delete --delete-excluded --exclude-from=rsync_data/exclusions.txt govtrack.us::govtrackdata/congress/113/votes rsync_data/.
 
 The data is being parsed by running:
 python load_db/load_votes.py
