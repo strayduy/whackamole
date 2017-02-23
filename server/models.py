@@ -53,12 +53,17 @@ class SenateVote(object):
     self.downvotes = data['downvotes']
 
   @classmethod
-  def get(cls, rep_id, state):
+  def get(cls, rep_id, user_id, state):
     find_dict = {}
     if rep_id:
       find_dict['rep_id'] = rep_id
     if state:
       find_dict['rep_state'] = state
+    if user_id:
+      user_votes = Database.db.user_votes.find({'user_id':user_id})
+      vote_oids = [ObjectId(v['congress_vote_id']) for v in user_votes]
+      print "The vote_ids are %s" % vote_oids
+      find_dict['_id'] = {'$in':vote_oids}
     votes = Database.db.senate_votes.find(find_dict).sort('downvotes',
         pymongo.DESCENDING)
     votes = map(SenateVote, votes)
@@ -66,7 +71,6 @@ class SenateVote(object):
 
   @classmethod
   def update_vote(cls, vote_id, consistent, increment=1):
-    print "The vote_id is [%s], the consistent bool is [%s]" % (vote_id, consistent)
     counter = "upvotes"
     if not consistent:
       counter = "downvotes"

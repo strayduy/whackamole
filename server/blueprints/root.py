@@ -16,7 +16,8 @@ blueprint = Blueprint('root', __name__)
 
 @blueprint.route('/')
 @blueprint.route('/<string:state>')
-def index(state=None):
+@blueprint.route('/<string:state>/<string:user_id>')
+def index(state=None, user_id=None):
   me = session.get('user')
 
   if not me:
@@ -25,9 +26,12 @@ def index(state=None):
   if state:
     state = state.upper()
 
-  votes = SenateVote.get(rep_id=None, state=state)
+  if user_id:
+    print "The user_id is %s" % user_id
+
+  votes = SenateVote.get(rep_id=None, user_id=user_id, state=state)
   return render_template('index.html', name=me['name'],
-      state=state, votes=votes)
+      state=state, user_id=user_id, votes=votes)
 
 @blueprint.route('/signout')
 def signout():
