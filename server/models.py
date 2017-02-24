@@ -62,7 +62,6 @@ class SenateVote(object):
     if user_id:
       user_votes = Database.db.user_votes.find({'user_id':user_id})
       vote_oids = [ObjectId(v['congress_vote_id']) for v in user_votes]
-      print "The vote_ids are %s" % vote_oids
       find_dict['_id'] = {'$in':vote_oids}
     votes = Database.db.senate_votes.find(find_dict).sort('downvotes',
         pymongo.DESCENDING)
@@ -71,7 +70,6 @@ class SenateVote(object):
 
   @classmethod
   def update_vote(cls, vote_id, consistent, increment=1):
-    print "Got called with vote_id [%s], consistent [%s], increment [%s]" % (vote_id, consistent, increment)
     counter = "upvotes"
     if not consistent:
       counter = "downvotes"

@@ -27,9 +27,6 @@ def index(state=None, user_id=None):
   if state:
     state = state.upper()
 
-  if user_id:
-    print "The user_id is %s" % user_id
-
   votes = SenateVote.get(rep_id=None, user_id=user_id, state=state)
   return render_template('index.html', name=me['name'],
       state=state, user_id=user_id, votes=votes)
@@ -57,7 +54,6 @@ def increment_count():
   consistent = int(request.form['consistent'])
   me = session.get('user')
   old_vote = UserVote.get(user_id=me["name"], vote_id=vote_id)
-  print "The old_vote is [%s]" % old_vote
   if not old_vote:
     UserVote.add_vote(user_id=me["name"], vote_id=vote_id, consistent=consistent)
     SenateVote.update_vote(vote_id, consistent)
