@@ -1,4 +1,5 @@
 # Third party libs
+from bson.objectid import ObjectId
 from flask import redirect, url_for, session
 from flask import Blueprint
 from flask import render_template
@@ -47,7 +48,7 @@ def rep(rep_id):
     return redirect(url_for('oauth.login'))
 
   rep = SenateRep.get_by_rep_id(rep_id)
-  votes = SenateVote.get(rep_id=rep_id, state=None)
+  votes = SenateVote.get(rep_id=rep_id, user_id=None, state=None)
   return render_template('rep.html', rep=rep, votes=votes)
 
 @blueprint.route('/inc', methods=['POST'])
@@ -55,14 +56,33 @@ def increment_count():
   vote_id = request.form['vote_id'].replace(" + ", "")
   consistent = int(request.form['consistent'])
   me = session.get('user')
-  old_vote = UserVote.get_vote(me["name"], vote_id)
+  old_vote = UserVote.get(user_id=me["name"], vote_id=vote_id)
   print "The old_vote is [%s]" % old_vote
   if not old_vote:
-    UserVote.add_vote(me["name"], vote_id, consistent)
+    UserVote.add_vote(user_id=me["name"], vote_id=vote_id, consistent=consistent)
     SenateVote.update_vote(vote_id, consistent)
     operation = "increment"
   else:
-    UserVote.delete_vote(me["name"], vote_id)
+    UserVote.delete(user_id=me["name"], vote_id=vote_id)
     SenateVote.update_vote(vote_id, old_vote["consistent"], -1)
     operation = "decrement"
   return json.dumps({'status':'OK','operation':operation})
+
+@blueprint.route('/clear_votes', methods=['POST'])
+def clear_votes():
+  vote_id = request.form['vote_id'].replace(" + ", "")
+  me = session.get('user')
+  SenateVote.clear_votes(vote_id)
+  UserVote.delete(user_id=None, vote_id=vote_id)
+  return json.dumps({'status':'OK','vote_id':vote_id})
+
+@blueprint.route('/clear_user', methods=['POST'])
+def clear_user():
+  user_id = request.form['user_id']
+  me = session.get('user')
+  votes = UserVote.get(user_id=user_id, vote_id=None)
+  for vote in votes:
+    SenateVote.update_vote(vote["congress_vote_id"], vote["consistent"], -1)
+  UserVote.delete(user_id=user_id, vote_id=None)
+  return json.dumps({'status':'OK','user_id':user_id})
+

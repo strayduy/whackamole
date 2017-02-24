@@ -71,13 +71,21 @@ class SenateVote(object):
 
   @classmethod
   def update_vote(cls, vote_id, consistent, increment=1):
+    print "Got called with vote_id [%s], consistent [%s], increment [%s]" % (vote_id, consistent, increment)
     counter = "upvotes"
     if not consistent:
       counter = "downvotes"
     inc_dict = {"$inc": {counter: increment}}
     Database.db.senate_votes.update(
-      { "_id": ObjectId(vote_id)},
+      {"_id": ObjectId(vote_id)},
       inc_dict
+    )
+
+  @classmethod
+  def clear_votes(cls, vote_id):
+    Database.db.senate_votes.update(
+      {"_id": ObjectId(vote_id)},
+      {"$set": {"upvotes":0, "downvotes":0}}
     )
 
 class UserVote(object):
@@ -88,15 +96,18 @@ class UserVote(object):
     self.consistent = data['consistent']
 
   @classmethod
-  def get_vote(cls, user_id, vote_id):
-    print "Retrieving vote with user_id [%s], vote_id [%s]" % (
-        user_id, vote_id)
-    user_vote = Database.db.user_votes.find_one({'user_id': user_id, "congress_vote_id": vote_id})
-    return user_vote
+  def get(cls, user_id=None, vote_id=None):
+    find_dict = {}
+    if user_id:
+      find_dict['user_id'] = user_id
+    if vote_id:
+      find_dict['congress_vote_id'] = vote_id
+    if user_id and vote_id:
+      return Database.db.user_votes.find_one(find_dict)
+    return  Database.db.user_votes.find(find_dict)
 
   @classmethod
   def add_vote(cls, user_id, vote_id, consistent):
-    print "Adding vote with user_id [%s], vote_id [%s] and consistent [%s]" % (user_id, vote_id, consistent)
     insert_dict = {
       "user_id":user_id,
       "congress_vote_id":vote_id,
@@ -105,11 +116,10 @@ class UserVote(object):
     Database.db.user_votes.insert(insert_dict)
 
   @classmethod
-  def delete_vote(cls, user_id, vote_id):
-    print "Deleting vote with user_id [%s], vote_id [%s]" % (
-        user_id, vote_id)
-    delete_dict = {
-      "user_id":user_id,
-      "congress_vote_id":vote_id
-    }
+  def delete(cls, user_id, vote_id):
+    delete_dict = {}
+    if user_id:
+      delete_dict["user_id"] = user_id
+    if vote_id:
+      delete_dict["congress_vote_id"] = vote_id
     Database.db.user_votes.remove(delete_dict)
