@@ -53,12 +53,16 @@ class SenateVote(object):
     self.downvotes = data['downvotes']
 
   @classmethod
-  def get(cls, rep_id, state):
+  def get(cls, rep_id, user_id, state):
     find_dict = {}
     if rep_id:
       find_dict['rep_id'] = rep_id
     if state:
       find_dict['rep_state'] = state
+    if user_id:
+      user_votes = Database.db.user_votes.find({'user_id':user_id})
+      vote_oids = [ObjectId(v['congress_vote_id']) for v in user_votes]
+      find_dict['_id'] = {'$in':vote_oids}
     votes = Database.db.senate_votes.find(find_dict).sort('downvotes',
         pymongo.DESCENDING)
     votes = map(SenateVote, votes)
@@ -66,14 +70,20 @@ class SenateVote(object):
 
   @classmethod
   def update_vote(cls, vote_id, consistent, increment=1):
-    print "The vote_id is [%s], the consistent bool is [%s]" % (vote_id, consistent)
     counter = "upvotes"
     if not consistent:
       counter = "downvotes"
     inc_dict = {"$inc": {counter: increment}}
     Database.db.senate_votes.update(
-      { "_id": ObjectId(vote_id)},
+      {"_id": ObjectId(vote_id)},
       inc_dict
+    )
+
+  @classmethod
+  def clear_votes(cls, vote_id):
+    Database.db.senate_votes.update(
+      {"_id": ObjectId(vote_id)},
+      {"$set": {"upvotes":0, "downvotes":0}}
     )
 
 class UserVote(object):
@@ -84,15 +94,18 @@ class UserVote(object):
     self.consistent = data['consistent']
 
   @classmethod
-  def get_vote(cls, user_id, vote_id):
-    print "Retrieving vote with user_id [%s], vote_id [%s]" % (
-        user_id, vote_id)
-    user_vote = Database.db.user_votes.find_one({'user_id': user_id, "congress_vote_id": vote_id})
-    return user_vote
+  def get(cls, user_id=None, vote_id=None):
+    find_dict = {}
+    if user_id:
+      find_dict['user_id'] = user_id
+    if vote_id:
+      find_dict['congress_vote_id'] = vote_id
+    if user_id and vote_id:
+      return Database.db.user_votes.find_one(find_dict)
+    return  Database.db.user_votes.find(find_dict)
 
   @classmethod
   def add_vote(cls, user_id, vote_id, consistent):
-    print "Adding vote with user_id [%s], vote_id [%s] and consistent [%s]" % (user_id, vote_id, consistent)
     insert_dict = {
       "user_id":user_id,
       "congress_vote_id":vote_id,
@@ -101,11 +114,10 @@ class UserVote(object):
     Database.db.user_votes.insert(insert_dict)
 
   @classmethod
-  def delete_vote(cls, user_id, vote_id):
-    print "Deleting vote with user_id [%s], vote_id [%s]" % (
-        user_id, vote_id)
-    delete_dict = {
-      "user_id":user_id,
-      "congress_vote_id":vote_id
-    }
+  def delete(cls, user_id, vote_id):
+    delete_dict = {}
+    if user_id:
+      delete_dict["user_id"] = user_id
+    if vote_id:
+      delete_dict["congress_vote_id"] = vote_id
     Database.db.user_votes.remove(delete_dict)

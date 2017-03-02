@@ -33,12 +33,43 @@
               alert("The response is " + error);
             });
         });
+        $(".clear_button").click(function(){
+          var $button = $(this);
+          var request_params = {
+            vote_id: $button.attr("vote_id")
+          };
+          $.post('/clear_votes', request_params)
+            .done(function(response) {
+              parsed_response = JSON.parse(response);
+              alert("Success");
+            })
+            .fail(function(error) {
+              alert("The response is " + error);
+            });
+        });
+        $("#clear_user_button").click(function(){
+          var $button = $(this);
+          var request_params = {
+            user_id: $button.attr("user_id")
+          };
+          $.post('/clear_user', request_params)
+            .done(function(response) {
+              parsed_response = JSON.parse(response);
+              alert("Success");
+            })
+            .fail(function(error) {
+              alert("The response is " + error);
+            });
+        });
       });
     </script>
   </head>
   <body>
     <h1>Hello {{ name }}</h1>
     <h2>Votes</h2>
+    {% if user_id %}
+      <button id='clear_user_button' user_id='{{ user_id }}'>Clear user's Votes</button>
+    {% endif %}
     <table>
       {% for vote in votes %}
         <tr>
@@ -47,6 +78,7 @@
           <td><a target="_blank" href="/rep/{{ vote.rep_id }}">{{ vote.rep_name }}</a></td>
           <td><a target="_blank" href="{{ vote.bill_link }}">{{ vote.bill_title }}</a></td>
           <td>{{ vote.outcome }}</td>
+          <td><button class='clear_button' name='clearvotes' vote_id='{{ vote.id }}'>Clear Votes</button></td>
         </tr>
       {% endfor %}
     </table>
